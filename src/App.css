@@ -1,0 +1,16 @@
+.danger {
+  color: red;
+  border: 1px solid red;
+}
+
+.success {
+  color: green;
+  border: 1px solid green;
+}
+
+.success,
+.danger {
+  width: 30%;
+  padding: 1rem;
+  font-size: 1rem;
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import CreateBlogForm from './components/CreateBlogForm';
+import ToggleTable from './components/ToggleTable';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import './App.css';
@@ -74,13 +75,28 @@ const App = () => {
     }
   };
 
+  const handleDeleteBlog = async (id, name) => {
+    if (window.confirm(`Remove Blog You Won't need it by ${name}`)) {
+      const res = await blogService.deleteBlog(id);
+      if (res) {
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+      }
+    }
+  };
+
   const handleLogedOut = () => {
     setUser(null);
     window.localStorage.clear();
   };
 
   const blogsList = () =>
-    blogs.map((blog) => <Blog key={blog.id} blog={blog} />);
+    blogs.map((blog) => (
+      <Blog
+        key={blog.id}
+        blog={blog}
+        handleDelete={() => handleDeleteBlog(blog.id, blog.author)}
+      />
+    ));
 
   return (
     <div className="App">
@@ -100,18 +116,21 @@ const App = () => {
             {user.name} is logged in{' '}
             <button onClick={handleLogedOut}>Logout</button>
           </p>
-          <CreateBlogForm
-            handleSubmit={handleCreateBlog}
-            title={title}
-            author={author}
-            url={url}
-            handleAuthor={(e) => setAuthor(e.target.value)}
-            handleTitle={(e) => setTitle(e.target.value)}
-            handleUrl={(e) => setUrl(e.target.value)}
-          />
-          {blogsList()}
+
+          <ToggleTable buttonLabel="Create New Blog">
+            <CreateBlogForm
+              handleSubmit={handleCreateBlog}
+              title={title}
+              author={author}
+              url={url}
+              handleAuthor={(e) => setAuthor(e.target.value)}
+              handleTitle={(e) => setTitle(e.target.value)}
+              handleUrl={(e) => setUrl(e.target.value)}
+            />
+          </ToggleTable>
         </div>
       )}
+      {blogsList()}
     </div>
   );
 };
